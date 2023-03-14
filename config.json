@@ -1,0 +1,8 @@
+{
+  "columns": {
+    "ingredient": ["ingredient_name", "proteins", "carbs", "fats"],
+    "meal_plan": ["day_of_week", "meal_time", "recipe_name"],
+    "recipe": ["recipe_name", "ingredient_name", "quantity", "unit"],
+    "inventory": ["ingredient_name", "quantity", "unit"]
+  }
+}

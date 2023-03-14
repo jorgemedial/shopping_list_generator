@@ -1,23 +1,36 @@
+import json
+
+from src.shopping_list_generator import DataConnector, ListGenerator
 import streamlit as st
-from gsheetsdb import connect
-
-# Create a connection object.
-conn = connect()
+config_path = "config.json"
 
 
-# Perform SQL query on the Google Sheet.
-# Uses st.cache_data to only rerun when the query changes or after 10 min.
+if __name__ == '__main__':
+    # Create a connection object.
+    config_path = "config.json"
+    with open(config_path, "r") as f:
+        config = json.load(f)
 
-@st.cache_data(ttl=600)
-def run_query(query):
-    rows = conn.execute(query, headers=1)
-    rows = rows.fetchall()
-    return rows
+    tables = DataConnector().fetch_data(config)
+    required_quantities = tables["meal_plan"].join(
+        tables["recipes"].set_index("recipe_name"), on="recipe_name", how="left"
+    ).groupby("ingredient_name")["quantity"].sum()
+
+    shopping_list = tables["inventory"].join(
+        required_quantities, on="ingredient_name",
+        how="outer",
+        lsuffix="_inventory",
+        rsuffix="_required"
+    ).set_index(
+        "ingredient_name"
+    ).apply(
+        lambda row: row["quantity_required"] - row["quantity_inventory"], axis=1
+    ).apply(
+        lambda quantity: quantity if quantity > 0 else None
+    ).dropna()
+
+    st.table(data=shopping_list)
+
+    pass
 
 
-sheet_url = st.secrets["dummy"]
-rows = run_query(f'SELECT * FROM "{sheet_url}"')
-
-# Print results.
-for row in rows:
-    st.write(f"{row.Name} is {row.Age}")
