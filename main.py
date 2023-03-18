@@ -17,12 +17,15 @@ if __name__ == '__main__':
     ).groupby("ingredient_name")["quantity"].sum()
 
     shopping_list = tables["inventory"].join(
-        required_quantities, on="ingredient_name",
-        how="outer",
+        required_quantities,
+        on="ingredient_name",
+        how="right",
         lsuffix="_inventory",
         rsuffix="_required"
     ).set_index(
         "ingredient_name"
+    ).fillna(
+        {"quantity_inventory": 0}
     ).apply(
         lambda row: row["quantity_required"] - row["quantity_inventory"], axis=1
     ).apply(
