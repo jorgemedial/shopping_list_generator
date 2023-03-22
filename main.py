@@ -1,6 +1,6 @@
 import json
 
-from src.shopping_list_generator import DataConnector, ListGenerator
+from src.shopping_list_generator import DataConnector
 import streamlit as st
 config_path = "config.json"
 
