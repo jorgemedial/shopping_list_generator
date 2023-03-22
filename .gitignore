@@ -1,1 +1,4 @@
 backlog
+.venv
+*.xml
+secrets.toml

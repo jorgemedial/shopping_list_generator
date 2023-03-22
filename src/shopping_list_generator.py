@@ -7,7 +7,7 @@ class DataConnector:
     def __init__(self):
         self.conn = connect()
 
-    #@st.cache_data(ttl=30)
+    # @st.cache_data(ttl=30)
     def fetch_data(self, config):
         return {
             "ingredients": self._fetch_ingredients(config),
@@ -19,6 +19,7 @@ class DataConnector:
 
     def update_data(self, data):
         pass
+
     def _query_dataframe(self, table_name: str, columns: list) -> pd.DataFrame:
         sheet_url = st.secrets[table_name]
         query = f'SELECT * FROM "{sheet_url}"'
@@ -35,18 +36,18 @@ class DataConnector:
         table_name = "meal_plan"
         return self._query_dataframe(table_name, columns=config["columns"][table_name])
 
-    def _fetch_inventory(self, config):
+    def _fetch_inventory(self, config: dict):
         table_name = "inventory"
         return self._query_dataframe(table_name, columns=config["columns"][table_name])
-
 
     def _fetch_ingredients(self, config: dict):
         table_name = "ingredient"
         return self._query_dataframe(table_name, columns=config["columns"][table_name])
 
+    def _fetch_nutritional_requirements(self, config: dict):
+        table_name = "nutritional_requeriments"
+        return self._query_dataframe(table_name, columns=config["columns"][table_name])
 
-    def _fetch_nutritional_requirements(self, config):
-        return None
 
 class ListGenerator:
     pass
